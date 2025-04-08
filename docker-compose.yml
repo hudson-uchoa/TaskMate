@@ -1,18 +1,18 @@
 services:
   app:
     build:
-      context: .
+      context: ./taskmate-api
       dockerfile: Dockerfile
     container_name: taskmate-api
     restart: unless-stopped
     volumes:
-      - .:/var/www/html
+      - ./taskmate-api:/var/www/html
     working_dir: /var/www/html
     depends_on:
       - db
       - redis
     ports:
-      - "${APP_PORT}:8000"
+      - "${APP_PORT:-8080}:8000"
     environment:
       DB_HOST: db
       DB_PORT: ${DB_PORT}
@@ -46,9 +46,19 @@ services:
     networks:
       - taskmate-network
 
+  frontend:
+    build:
+      context: ./taskmate-web
+    container_name: taskmate-frontend
+    ports:
+      - "${FRONT_PORT:-3000}:80"
+    depends_on:
+      - app
+    networks:
+      - taskmate-network
+
 networks:
   taskmate-network:
 
 volumes:
   pgdata:
-
