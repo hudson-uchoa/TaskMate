@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Core\TokenBlacklistInterface;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Core\TokenHandlerInterface;
@@ -12,11 +13,16 @@ class AuthService
 {
     private UserRepository $userRepo;
     private TokenHandlerInterface $tokenHandler;
+    private TokenBlacklistInterface $blacklist;
 
-    public function __construct(UserRepository $userRepo, TokenHandlerInterface $tokenHandler)
-    {
+    public function __construct(
+        UserRepository $userRepo, 
+        TokenHandlerInterface $tokenHandler,
+        TokenBlacklistInterface $blacklist
+    ) {
         $this->userRepo = $userRepo;
         $this->tokenHandler = $tokenHandler;
+        $this->blacklist = $blacklist;
     }
 
     public function register(RegisterRequest $request): ?string
@@ -64,5 +70,12 @@ class AuthService
         ];
     
         return $this->tokenHandler->generateToken($payload);
+    }
+
+    public function logout(string $token): void
+    {
+        $payload = $this->tokenHandler->validateToken($token);
+        $ttl = $payload->exp - time();
+        $this->blacklist->blacklist($token, $ttl);
     }
 }

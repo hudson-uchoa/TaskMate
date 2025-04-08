@@ -85,4 +85,32 @@ class AuthController
             ]);
         }
     }
+
+    public function logout(Request $request, Response $response): Response
+    {
+        $authHeader = $request->getHeaderLine('Authorization');
+
+        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+            return $this->jsonResponse($response, 400, [
+                'success' => false,
+                'message' => 'Token ausente.',
+            ]);
+        }
+
+        $token = substr($authHeader, 7);
+
+        try {
+            $this->authService->logout($token);
+
+            return $this->jsonResponse($response, 200, [
+                'success' => true,
+                'message' => 'Logout realizado com sucesso.',
+            ]);
+        } catch (\Throwable $e) {
+            return $this->jsonResponse($response, 500, [
+                'success' => false,
+                'message' => 'Erro ao fazer logout: ' . $e->getMessage(),
+            ]);
+        }
+    }
 }

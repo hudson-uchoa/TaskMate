@@ -1,5 +1,7 @@
 <?php
 
+use App\Core\TokenBlacklistInterface;
+use App\Services\TokenBlacklistRedisService;
 use DI\Container;
 use Dotenv\Dotenv;
 use App\Core\JwtHandler;
@@ -8,9 +10,7 @@ use App\Repositories\UserRepository;
 use App\Services\AuthService;
 use App\Middlewares\AuthMiddleware;
 use App\Middlewares\AuthenticatedUserMiddleware;
-use App\Console\Migrations\MigrationLoader;
-use App\Console\Migrations\MigrationTracker;
-use App\Console\Migrations\MigrationExecutor;
+use Predis\Client as RedisClient;
 
 
 // Carrega as variáveis do .env
@@ -32,8 +32,21 @@ return function (): Container {
         );
     });
 
+    $container->set(RedisClient::class, function () use($settings) {
+        $redisSettings = $settings['redis'];
+        return new RedisClient([
+            'scheme' => 'tcp',
+            'host' => $redisSettings['host'],
+            'port' => $redisSettings['port'],
+        ]);
+    });
+
     $container->set(TokenHandlerInterface::class, fn () => 
         new JwtHandler($settings['jwt_secret'] ?? 'secret')
+    );
+
+    $container->set(TokenBlacklistInterface::class, fn ($c) =>
+        new TokenBlacklistRedisService($c->get(RedisClient::class))
     );
 
     $container->set(UserRepository::class, fn ($c) => 
@@ -43,12 +56,17 @@ return function (): Container {
     $container->set(AuthService::class, fn ($c) =>
         new AuthService(
             $c->get(UserRepository::class),
-            $c->get(TokenHandlerInterface::class)
+            $c->get(TokenHandlerInterface::class),
+            $c->get(TokenBlacklistInterface::class)
         )
     );
 
     $container->set(AuthMiddleware::class, fn ($c) =>
-        new AuthMiddleware($c->get(TokenHandlerInterface::class), $c->get(UserRepository::class))
+        new AuthMiddleware(
+            $c->get(TokenHandlerInterface::class),
+            $c->get(UserRepository::class),
+            $c->get(TokenBlacklistInterface::class)
+        )
     );
 
     $container->set(AuthenticatedUserMiddleware::class, fn($c) =>

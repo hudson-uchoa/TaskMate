@@ -2,6 +2,7 @@
 
 namespace App\Middlewares;
 
+use App\Core\TokenBlacklistInterface;
 use App\Core\TokenHandlerInterface;
 use App\Repositories\UserRepository;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -14,11 +15,16 @@ class AuthMiddleware implements MiddlewareInterface
 {
     private TokenHandlerInterface $tokenHandler;
     private UserRepository $userRepo;
+    private TokenBlacklistInterface $blacklist;
 
-    public function __construct(TokenHandlerInterface $tokenHandler, UserRepository $userRepo)
-    {
+    public function __construct(
+        TokenHandlerInterface $tokenHandler, 
+        UserRepository $userRepo,
+        TokenBlacklistInterface $blacklist
+    ){
         $this->tokenHandler = $tokenHandler;
         $this->userRepo = $userRepo;
+        $this->blacklist = $blacklist;
     }
 
     public function process(Request $request, Handler $handler): Response
@@ -32,6 +38,10 @@ class AuthMiddleware implements MiddlewareInterface
         $token = substr($authHeader, 7);
 
         try {
+            if ($this->blacklist->isBlacklisted($token)) {
+                return $this->unauthorizedResponse('Token expirado ou revogado.');
+            }
+            
             $payload = $this->tokenHandler->validateToken($token);
             $user = $this->userRepo->findById($payload->sub);
 
