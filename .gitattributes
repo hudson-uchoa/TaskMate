@@ -1,0 +1,23 @@
+* text=auto eol=lf
+
+*.php text
+*.html text
+*.css text
+*.js text
+*.json text
+*.md text
+*.yml text
+*.yaml text
+*.xml text
+*.sh text eol=lf
+
+.env export-ignore
+.env.example export-ignore
+*.log export-ignore
+*.lock export-ignore
+.DS_Store export-ignore
+.idea/ export-ignore
+.vscode/ export-ignore
+node_modules/ export-ignore
+vendor/ export-ignore
+docker-compose.override.yml export-ignore
