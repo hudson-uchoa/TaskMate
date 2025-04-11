@@ -1,0 +1,20 @@
+# docker-compose.override.yml
+services:
+  frontend:
+    build:
+      context: ./taskmate-web
+      dockerfile: Dockerfile.dev
+    container_name: taskmate-frontend-dev
+    working_dir: /app
+    volumes:
+      - ./taskmate-web:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    command: npm run dev -- --host
+    environment:
+      - NODE_ENV=development
+    networks:
+      - taskmate-network
+    depends_on:
+      - app
