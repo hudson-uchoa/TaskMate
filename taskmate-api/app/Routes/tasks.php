@@ -14,6 +14,6 @@ return function (RouteCollectorProxy $group, ContainerInterface $container) {
         $taskGroup->get('/{id}', [TaskController::class, 'getById']);
         $taskGroup->get('', [TaskController::class, 'getAll']);
     })
-    ->add($container->get(AuthenticatedUserMiddleware::class))
-    ->add($container->get(AuthMiddleware::class));
+        ->add($container->get(AuthenticatedUserMiddleware::class))
+        ->add($container->get(AuthMiddleware::class));
 };

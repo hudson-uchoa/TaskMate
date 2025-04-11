@@ -7,12 +7,14 @@ class RegisterRequest
     private string $name;
     private string $email;
     private string $password;
+    private string $confirmPassword;
 
     public function __construct(array $data)
     {
-        $this->name     = $data['name'] ?? '';
-        $this->email    = $data['email'] ?? '';
-        $this->password = $data['password'] ?? '';
+        $this->name            = $data['name'] ?? '';
+        $this->email           = $data['email'] ?? '';
+        $this->password        = $data['password'] ?? '';
+        $this->confirmPassword = $data['confirmPassword'] ?? '';
 
         $this->validate();
     }
@@ -29,6 +31,10 @@ class RegisterRequest
 
         if (strlen($this->password) < 6) {
             throw new \InvalidArgumentException('Senha deve ter pelo menos 6 caracteres');
+        }
+
+        if ($this->password !== $this->confirmPassword) {
+            throw new \InvalidArgumentException('As senhas não coincidem');
         }
     }
 

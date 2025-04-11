@@ -53,8 +53,8 @@ class User
     public function getName(): string { return $this->name; }
     public function getEmail(): string { return $this->email; }
     public function getPassword(): string { return $this->password; }
-    public function getCreatedAt(): string { return $this->createdAt; }
-    public function getUpdatedAt(): string { return $this->updatedAt; }
+    public function getCreatedAt(): \DateTime { return new \DateTime($this->createdAt); }
+    public function getUpdatedAt(): \DateTime { return new \DateTime($this->updatedAt); }
     
     public function setId(int $id): void { $this->id = $id; }
     public function setName(string $name): void { $this->name = $name; }

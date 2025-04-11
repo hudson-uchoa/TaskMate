@@ -12,8 +12,6 @@ use App\Middlewares\AuthMiddleware;
 use App\Middlewares\AuthenticatedUserMiddleware;
 use Predis\Client as RedisClient;
 
-
-// Carrega as variáveis do .env
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
@@ -71,7 +69,6 @@ return function (): Container {
 
     $container->set(AuthenticatedUserMiddleware::class, fn($c) =>
         new AuthenticatedUserMiddleware(
-            $c->get(TokenHandlerInterface::class),
             $c->get(UserRepository::class)
         )
     );

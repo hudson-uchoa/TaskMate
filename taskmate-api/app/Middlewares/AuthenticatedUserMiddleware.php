@@ -2,44 +2,34 @@
 
 namespace App\Middlewares;
 
+use App\Repositories\UserRepository;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Server\RequestHandlerInterface as Handler;
 use Psr\Http\Server\MiddlewareInterface;
-use App\Core\TokenHandlerInterface;
-use App\Repositories\UserRepository;
-use Slim\Exception\HttpUnauthorizedException;
+use Psr\Http\Server\RequestHandlerInterface as Handler;
+use App\Helpers\JsonResponseHelper;
 
 class AuthenticatedUserMiddleware implements MiddlewareInterface
 {
-    private TokenHandlerInterface $tokenHandler;
-    private UserRepository $userRepository;
+    private UserRepository $userRepo;
 
-    public function __construct(TokenHandlerInterface $tokenHandler, UserRepository $userRepository)
+    public function __construct(UserRepository $userRepo)
     {
-        $this->tokenHandler = $tokenHandler;
-        $this->userRepository = $userRepository;
+        $this->userRepo = $userRepo;
     }
 
     public function process(Request $request, Handler $handler): Response
     {
-        $authHeader = $request->getHeaderLine('Authorization');
-        $token = str_replace('Bearer ', '', $authHeader);
-
-        if (!$token) {
-            throw new HttpUnauthorizedException($request, 'Token não fornecido');
-        }
-
-        $payload = $this->tokenHandler->validateToken($token);
+        $payload = $request->getAttribute('token_payload');
 
         if (!$payload || !isset($payload->sub)) {
-            throw new HttpUnauthorizedException($request, 'Token inválido');
+            return JsonResponseHelper::unauthorized('Token de autenticação inválido ou expirado.');
         }
 
-        $user = $this->userRepository->findById($payload->sub);
+        $user = $this->userRepo->findById($payload->sub);
 
         if (!$user) {
-            throw new HttpUnauthorizedException($request, 'Usuário não encontrado');
+            return JsonResponseHelper::unauthorized('Usuário associado ao token não foi encontrado.');
         }
 
         $request = $request->withAttribute('user', $user);

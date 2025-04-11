@@ -58,10 +58,14 @@ class CreateTaskRequest
             return;
         }
 
-        $d = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $date);
-        if (!$d || $d->format('Y-m-d H:i:s') !== $date) {
-            throw new \InvalidArgumentException($errorMessage);
+        $formats = ['Y-m-d H:i:s', 'Y-m-d H:i', 'Y-m-d'];
+        foreach ($formats as $format) {
+            $d = \DateTimeImmutable::createFromFormat($format, $date);
+            if ($d && $d->format($format) === $date) {
+                return;
+            }
         }
+        throw new \InvalidArgumentException($errorMessage);
     }
 
     public function getTitle(): string { return $this->title; }

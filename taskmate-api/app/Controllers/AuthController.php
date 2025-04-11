@@ -30,13 +30,13 @@ class AuthController
 
             if (!$token) {
                 return $this->jsonResponse($response, 401, [
-                    'message' => 'Credenciais inválidas.',
+                    'message' => '"E-mail ou senha incorretos. Verifique suas credenciais e tente novamente.',
                     'token' => null,
                 ]);
             }
 
             return $this->jsonResponse($response, 200, [
-                'message' => 'Login realizado com sucesso.',
+                'message' => 'Login efetuado com sucesso!',
                 'token' => $token,
             ]);
 
@@ -48,7 +48,7 @@ class AuthController
         } catch (\Throwable $e) {
             return $this->jsonResponse($response, 500, [
                 'success' => false,
-                'message' => 'Erro interno ao fazer login: '.$e->getMessage(),
+                'message' => 'Não foi possível realizar o login no momento. Tente novamente em instantes.',
             ]);
         }
     }
@@ -64,13 +64,13 @@ class AuthController
             if (!$token) {
                 return $this->jsonResponse($response, 400, [
                     'success' => false,
-                    'message' => 'Usuário já existe.',
+                    'message' => 'Já existe uma conta cadastrada com este e-mail.',
                 ]);
             }
 
             return $this->jsonResponse($response, 201, [
                 'success' => true,
-                'message' => 'Registro realizado com sucesso.',
+                'message' => 'Cadastro concluído com sucesso! Seja bem-vindo!',
                 'token' => $token,
             ]);
         } catch (\InvalidArgumentException $e) {
@@ -81,7 +81,7 @@ class AuthController
         } catch (\Throwable $e) {
             return $this->jsonResponse($response, 500, [
                 'success' => false,
-                'message' => 'Erro interno ao registrar: '.$e->getMessage(),
+                'message' => 'Não conseguimos concluir o cadastro. Tente novamente mais tarde.',
             ]);
         }
     }
@@ -93,7 +93,7 @@ class AuthController
         if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
             return $this->jsonResponse($response, 400, [
                 'success' => false,
-                'message' => 'Token ausente.',
+                'message' => 'Token de autenticação não fornecido.',
             ]);
         }
 
@@ -104,12 +104,12 @@ class AuthController
 
             return $this->jsonResponse($response, 200, [
                 'success' => true,
-                'message' => 'Logout realizado com sucesso.',
+                'message' => 'Logout efetuado com sucesso. Até logo!',
             ]);
         } catch (\Throwable $e) {
             return $this->jsonResponse($response, 500, [
                 'success' => false,
-                'message' => 'Erro ao fazer logout: ' . $e->getMessage(),
+                'message' => 'Ocorreu um erro ao finalizar sua sessão. Tente novamente.',
             ]);
         }
     }

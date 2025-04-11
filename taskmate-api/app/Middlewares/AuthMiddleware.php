@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface as Handler;
-use Slim\Psr7\Response as SlimResponse;
+use App\Helpers\JsonResponseHelper;
 
 class AuthMiddleware implements MiddlewareInterface
 {
@@ -32,39 +32,23 @@ class AuthMiddleware implements MiddlewareInterface
         $authHeader = $request->getHeaderLine('Authorization');
 
         if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
-            return $this->unauthorizedResponse();
+            return JsonResponseHelper::unauthorized();
         }
 
         $token = substr($authHeader, 7);
 
         try {
             if ($this->blacklist->isBlacklisted($token)) {
-                return $this->unauthorizedResponse('Token expirado ou revogado.');
+                return JsonResponseHelper::unauthorized('Token expirado ou revogado.');
             }
             
             $payload = $this->tokenHandler->validateToken($token);
-            $user = $this->userRepo->findById($payload->sub);
 
-            if (!$user) {
-                return $this->unauthorizedResponse();
-            }
-
-            $request = $request->withAttribute('user', $user);
+            $request = $request->withAttribute('token_payload', $payload);
 
             return $handler->handle($request);
         } catch (\Exception $e) {
-            return $this->unauthorizedResponse($e->getMessage());
+            return JsonResponseHelper::unauthorized('Falha ao validar o token de autenticação.');
         }
-    }
-
-    private function unauthorizedResponse(string $message = 'Token inválido ou ausente.'): Response
-    {
-        $response = new SlimResponse();
-        $response->getBody()->write(json_encode([
-            'success' => false,
-            'message' => $message
-        ]));
-
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
     }
 }

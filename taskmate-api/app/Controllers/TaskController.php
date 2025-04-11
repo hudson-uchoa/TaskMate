@@ -42,7 +42,7 @@ class TaskController
 
             return $this->jsonResponse($response, 201, [
                 'success' => true,
-                'message' => 'Task criada com sucesso!',
+                'message' => 'Tarefa criada com sucesso!',
                 'task' => $task
             ]);
         } catch (\InvalidArgumentException $e) {
@@ -54,7 +54,7 @@ class TaskController
         } catch (\Throwable $e) {
             return $this->jsonResponse($response, 500, [
                 'success' => false,
-                'message' => 'Erro interno do servidor.',
+                'message' => 'Algo deu errado ao criar essa tarefa.',
                 'task' => null
             ]);
         }
@@ -84,7 +84,7 @@ class TaskController
 
             return $this->jsonResponse($response, $success ? 200 : 404, [
                 'success' => $success,
-                'message' => $success ? 'Task atualizada com sucesso!' : 'Task não encontrada.',
+                'message' => $success ? 'Tarefa atualizada com sucesso!' : 'Não foi possível localizar a tarefa',
             ]);
         } catch (\InvalidArgumentException $e) {
             return $this->jsonResponse($response, 400, [
@@ -94,7 +94,7 @@ class TaskController
         } catch (\Throwable $e) {
             return $this->jsonResponse($response, 500, [
                 'success' => false,
-                'message' => 'Erro interno do servidor. '.$e->getMessage(),
+                'message' => 'Algo deu errado ao atualizar essa tarefa.',
             ]);
         }
     }
@@ -112,12 +112,12 @@ class TaskController
 
             return $this->jsonResponse($response, $success ? 200 : 404, [
                 'success' => $success,
-                'message' => $success ? 'Task removida com sucesso!' : 'Task não encontrada.',
+                'message' => $success ? 'Tarefa excluída com sucesso!' : 'Essa tarefa não existe ou já foi excluída.',
             ]);
         } catch (\Throwable $e) {
             return $this->jsonResponse($response, 500, [
                 'success' => false,
-                'message' => 'Erro ao excluir task.',
+                'message' => 'Algo deu errado ao excluir essa tarefa.',
             ]);
         }
     }
@@ -143,13 +143,13 @@ class TaskController
 
             return $this->jsonResponse($response, 200, [
                 'success' => true,
-                'message' => 'Task encontrada com sucesso!',
-                'task' => $task->toArray()
+                'message' => 'Detalhes da tarefa obtidos com sucesso!',
+                'task' => $task->jsonSerialize()
             ]);
         } catch (\Throwable $e) {
             return $this->jsonResponse($response, 500, [
                 'success' => false,
-                'message' => 'Erro ao buscar task.',
+                'message' => 'Algo deu errado ao buscar essa tarefa.',
                 'task' => null
             ]);
         }
@@ -167,14 +167,14 @@ class TaskController
 
             return $this->jsonResponse($response, 200, [
                 'success' => true,
-                'message' => 'Busca por tasks realizada com sucesso!',
+                'message' => 'Lista de tarefas carregada com sucesso!',
                 'tasks' => array_map(fn ($task) => $task->jsonSerialize(), $tasks) 
             ]);
 
         } catch (\Throwable $e) {
             return $this->jsonResponse($response, 500, [
                 'success' => false,
-                'message' => 'Erro ao buscar tasks. '.$e->getMessage(),
+                'message' => 'Algo deu errado ao carregar suas tarefas. '.$e->getMessage(),
                 'tasks' => []
             ]);
         }

@@ -98,8 +98,8 @@ class Task implements \JsonSerializable
             'reminder_at' => $this->getReminderAt(),
             'completed_at' => $this->getCompletedAt(),
             'user_id' => $this->getUserId(),
-            'created_at' => $this->getCreatedAt(),
-            'updated_at' => $this->getUpdatedAt()
+            'created_at' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'updated_at' => $this->getUpdatedAt()->format('Y-m-d H:i:s')
         ];
     }
 
@@ -113,8 +113,8 @@ class Task implements \JsonSerializable
     public function getCategory(): ?string { return $this->category; }
     public function getReminderAt(): ?string { return $this->reminderAt; }
     public function getCompletedAt(): ?string { return $this->completedAt; }
-    public function getCreatedAt(): string { return $this->createdAt; }
-    public function getUpdatedAt(): string { return $this->updatedAt; }
+    public function getCreatedAt(): \DateTime { return new \DateTime($this->createdAt); }
+    public function getUpdatedAt(): \DateTime { return new \DateTime($this->createdAt); }
 
     public function setId(int $id): void { $this->id = $id; }
     public function setTitle(string $title): void { $this->title = $title; }
