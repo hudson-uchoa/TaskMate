@@ -23,7 +23,7 @@ export default function Header() {
   };
 
   return (
-    <nav className="navbar navbar-expand-md bg-light shadow-sm">
+    <nav className="navbar navbar-expand-md min-vw-100 bg-light shadow-sm">
       <div className="container">
         <a className="navbar-brand" href="/">
           <img

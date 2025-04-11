@@ -63,7 +63,6 @@ export default function EditTaskForm() {
       reminder_at: formatDate(formData.reminderAt),
       completed_at: formatDate(formData.completedAt),
     };
-    console.log(payload);
 
     try {
       await updateTask(id, payload);

@@ -12,7 +12,7 @@ export default function EditTaskPage() {
     <div className="container py-4 min-vh-100">
       <button
         className="btn btn-outline-secondary mb-3 d-flex align-items-center gap-2"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/tasks")}
       >
         <ArrowLeft size={18} /> Voltar para a Home
       </button>
