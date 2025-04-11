@@ -1,0 +1,12 @@
+.fullHeight {
+  min-height: 80vh;
+}
+
+.formWrapper {
+  max-width: 480px;
+}
+
+.logo {
+  max-width: 100px;
+  height: auto;
+}

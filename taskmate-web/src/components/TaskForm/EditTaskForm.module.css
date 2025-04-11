@@ -1,0 +1,44 @@
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .heading {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form input,
+  .form textarea,
+  .form select {
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  
+  .form input:focus,
+  .form textarea:focus,
+  .form select:focus {
+    border-color: #0d6efd;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  

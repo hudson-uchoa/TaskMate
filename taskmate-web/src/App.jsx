@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "@/pages/Home/Home";
+import LoginPage from "@/pages/Auth/Login";
+import RegisterPage from "@/pages/Auth/Register";
+import TasksPage from "@/pages/Tasks/Index";
+import CreateTaskPage from "@/pages/Tasks/Create";
+import EditTaskPage from "@/pages/Tasks/Edit";
+import BaseLayout from "@/routes/BaseLayout";
+import PrivateLayout from "@/routes/PrivateLayout";
+import AuthLayout from "@/routes/AuthLayout";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Router>
+      <Routes>
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Route>
 
-export default App
+        <Route element={<BaseLayout />}>
+            <Route path="/" element={<HomePage />} />
+          <Route element={<PrivateLayout />}>
+            <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/tasks/create" element={<CreateTaskPage />} />
+            <Route path="/tasks/edit/:id" element={<EditTaskPage />} />
+          </Route>
+        </Route>
+      </Routes>
+    </Router>
+  );
+}
